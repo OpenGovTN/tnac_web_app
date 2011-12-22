@@ -28,9 +28,8 @@ public class MetadataFromFiles {
 	JSONObject root=new JSONObject();
 	static String filePrefix="raw";
 	static String filePostfix=".csv";
-	static File container=(System.getProperty("os.name").toLowerCase().indexOf("win") >= 0)?new File("D:/tnacData"):new File("/root/tomcat/ROOT/WEB-INF");
 	
-	public synchronized void initialize(){
+	public synchronized void initialize(File container){
 		File persisted=new File(container,"root.json");
 		if (persisted.exists()){
 			try {
@@ -75,7 +74,7 @@ public class MetadataFromFiles {
 				obj.put("path",obj.getString("code"));
 			}
 			root.put("children",circonsriptions);
-			persist(root);
+			persist(container,root);
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
@@ -96,7 +95,7 @@ public class MetadataFromFiles {
 	}
 
 
-	private void persist(JSONObject e) {
+	private void persist(File container,JSONObject e) {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		JsonParser jp = new JsonParser();
 		JsonElement je = jp.parse(e.toString());

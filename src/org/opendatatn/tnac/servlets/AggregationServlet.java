@@ -17,7 +17,6 @@ import org.apache.commons.io.FileUtils;
 @WebServlet("/agg/*")
 public class AggregationServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static File container=(System.getProperty("os.name").toLowerCase().indexOf("win") >= 0)?new File("D:/tnacData/json1"):new File("/root/tomcat/ROOT/WEB-INF/json1");
    
     /**
      * @see HttpServlet#HttpServlet()
@@ -31,6 +30,7 @@ public class AggregationServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		File container = new File(request.getServletContext().getRealPath("/")+ "/WEB-INF/json1");//assumes exploded directory
 		response.setContentType("application/json; charset=UTF-8");
 		response.setCharacterEncoding("UTF-8");
 		String aggPath=request.getPathInfo();

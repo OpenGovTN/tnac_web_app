@@ -1,5 +1,6 @@
 package org.opendatatn.tnac.servlets;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -28,7 +29,8 @@ public class MetaDataServlet extends HttpServlet {
     @Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
-		MetadataFromFiles.getInstance().initialize();
+		File container = new File(config.getServletContext().getRealPath("/")+ "/WEB-INF");//assumes exploded directory
+		MetadataFromFiles.getInstance().initialize(container);
 	}
 
 
