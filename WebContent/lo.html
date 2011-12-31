@@ -1,0 +1,104 @@
+<html>	
+<head>
+  <title>OpenLayers Example</title>
+ <script
+	src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
+    <script src="http://openlayers.org/api/OpenLayers.js"></script>
+<script src="js/highcharts.js" type="text/javascript"></script>
+<script src="js/themes/grid.js" type="text/javascript"></script>
+ <script type="text/javascript" src="js/tnacTree.js"></script>
+    </head>
+    <body>
+      <div id="map"></div>
+      <script defer="defer" type="text/javascript">
+      var selectControl,selectedFeature;
+      
+      function onPopupClose(evt) {
+          selectControl.unselect(selectedFeature);
+      }
+	   function onFeatureSelect(feature) {
+          selectedFeature = feature;
+    	  var container='<div id="container" class="highcharts-container" style="height: 800px; margin: 0 2em; clear: both; min-width: 1024px"></div>';
+			text = '<h3 align="center">'+feature.attributes.NAME_1.value + "</a></h3><div id=id='mainView'>" +container+ "</div><br />";
+
+          popup = new OpenLayers.Popup("chicken", 
+        		  new OpenLayers.Bounds(0,0,0,0),
+                                   new OpenLayers.Size(1084,880),
+                                   text,
+                                   true, onPopupClose);
+          loadAggResult(feature.attributes.ID_1.value);
+          feature.popup = popup;
+	      popup.setOpacity(0.7);
+          map.addPopup(popup);
+      }
+
+      function onFeatureUnselect(feature) {
+          map.removePopup(feature.popup);
+          feature.popup.destroy();
+          feature.popup = null;
+      }
+
+      
+      var kmlCFile = "circonscription.kml";
+        var kmlDFile = "deleg.kml";
+       var map = new OpenLayers.Map('map');
+        var wms = new OpenLayers.Layer.WMS( "OpenLayers WMS",
+            "http://vmap0.tiles.osgeo.org/wms/vmap0", {layers: 'basic'} );
+ 
+        var circonscription = new OpenLayers.Layer.GML("KML", kmlCFile, 
+               {
+                format: OpenLayers.Format.KML, 
+                formatOptions: {
+                  extractStyles: false, 
+                  extractAttributes: true,
+                  maxDepth: 2,
+                  transparent: true
+                }
+               });
+        var deleg = new OpenLayers.Layer.GML("KML", kmlDFile, 
+                {
+                 format: OpenLayers.Format.KML, 
+                 formatOptions: {
+                   extractStyles: false, 
+                   extractAttributes: true,
+                   maxDepth: 2,
+                   transparent: true
+                 }
+                });
+		
+        var s = new OpenLayers.Style({
+        	  'fillColor': 'white',
+        	  'strokeColor': 'black',
+        	  'fillOpacity' : 0.2,
+              "select": {
+                  fillColor: "#8aeeef",
+                  strokeColor: "#32a8a9"
+              }
+      	});
+
+        var highlightCtrl = new OpenLayers.Control.SelectFeature(circonscription, {
+            toggle: true,
+            highlightOnly: false,
+            renderIntent: "select"
+        });
+        
+        var polygonLayer = new OpenLayers.Layer.Vector("Polygon Layer");
+	  	selectControl = new OpenLayers.Control.SelectFeature(circonscription,
+                {toggle: true, onSelect: onFeatureSelect, onUnselect: onFeatureUnselect});
+        circonscription.styleMap=s;
+        map.addLayer(wms);
+        map.addLayer(circonscription);
+        map.addLayer(deleg);
+        map.addLayer(polygonLayer);
+		map.addControl(new OpenLayers.Control.LayerSwitcher());
+        map.addControl(new OpenLayers.Control.MousePosition());
+        map.addControl( highlightCtrl);
+	    map.zoomToExtent(new OpenLayers.Bounds(8,31,11,37));
+        map.addControl (selectControl); 
+        highlightCtrl.activate();
+	    selectControl.activate();
+      
+      </script>
+
+</body>
+</html>
